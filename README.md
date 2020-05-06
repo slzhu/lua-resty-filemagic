@@ -1,11 +1,11 @@
-# lua-resty-fileinfo
+# lua-resty-filemagic
 
-`lua-resty-fileinfo` is a file information library implementing LuaJIT bindings to `libmagic`.
+`lua-resty-filemagic` is a file information library implementing LuaJIT bindings to `libmagic`.
 
-## Hello World with lua-resty-fileinfo
+## Hello World with lua-resty-filemagic
 
 ```lua
-local fileinfo = require "resty.fileinfo"
+local fileinfo = require "resty.filemagic"
 fileinfo"plain-text.txt"
 ```
 
@@ -13,28 +13,11 @@ This will return string containing `ASCII text`. But there are other information
 
 ## Installation
 
-Just place [`fileinfo.lua`](https://github.com/bungle/lua-resty-fileinfo/blob/master/lib/resty/fileinfo.lua) somewhere in your `package.path`, preferably under `resty` directory. If you are using OpenResty, the default location would be `/usr/local/openresty/lualib/resty`.
+Just place [`filemagic.lua`](https://github.com/slzhu/lua-resty-filemagic/blob/master/lib/resty/filemagic.lua) somewhere in your `package.path`, preferably under `resty` directory. If you are using OpenResty, the default location would be `/usr/local/openresty/lualib/resty`.
 
 ### Compiling and Installing libmagic C-library
 
 Consult your operating system or package management about installing this (usually it is already installed in most systems).
-
-### Using LuaRocks or MoonRocks
-
-If you are using LuaRocks >= 2.2:
-
-```Shell
-$ luarocks install lua-resty-fileinfo
-```
-
-If you are using LuaRocks < 2.2:
-
-```Shell
-$ luarocks install --server=http://rocks.moonscript.org moonrocks
-$ moonrocks install lua-resty-fileinfo
-```
-
-MoonRocks repository for `lua-resty-fileinfo` is located here: https://rocks.moonscript.org/modules/bungle/lua-resty-fileinfo.
 
 ## Lua API
 
@@ -42,10 +25,10 @@ TBD
 
 ## License
 
-`lua-resty-fileinfo` uses two clause BSD license.
+`lua-resty-filemagic` uses two clause BSD license.
 
 ```
-Copyright (c) 2014, Aapo Talvensaari
+Copyright (c) 2020, Joney Zhu
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -69,4 +52,3 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
-

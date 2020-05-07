@@ -75,12 +75,12 @@ flgs.no_check_troff              = 0x000000 -- /* Don't check ascii/troff */
 
 local params                     = {}
 
---         Parameter			         Type	   Default
-params.magic_param_indir_max     = 0  -- size_t    15
-params.magic_param_name_max      = 1  -- size_t    30
-params.magic_param_elf_phnum_max = 2  -- size_t    128
-params.magic_param_elf_shnum_max = 3  -- size_t    32768
-params.magic_param_elf_notes_max = 4  -- size_t    256
+--         Parameter                     Type      Default
+params.magic_param_indir_max     = 0  -- size_t    15           
+params.magic_param_name_max      = 1  -- size_t    30           controls the maximum number of calls for name/use.
+params.magic_param_elf_phnum_max = 2  -- size_t    128          controls how many ELF program sections will	be processed.
+params.magic_param_elf_shnum_max = 3  -- size_t    32768        controls how many ELF sections will be processed.
+params.magic_param_elf_notes_max = 4  -- size_t    256          controls how many ELF notes will be processed.
 params.magic_param_regex_max     = 5  -- size_t    8192
 params.magic_param_bytes_max     = 6  -- size_t    1048576
 
@@ -115,7 +115,7 @@ local function __call(self, path, flags, magic)
         assert(lib.magic_load(context, magic) == 0, "Unable to load magic database.")
 
         local value = lib.magic_file(context, path)
-        return value and ffi_str(value) or false
+        return value and ffi_str(value) or false, not value and self:error() or nil
     end
 end
 
@@ -130,8 +130,8 @@ FileMagic.params  = params
 
 local mt          = { __index = FileMagic, __call = __call }
 
----@param flags number | number[]
----@param magic string
+---@param flags number | number[] @@ optional, 0 by default
+---@param magic string @@ optional
 ---@return LuaFileMagic
 function FileMagic.new(flags, magic)
     local context = ffi_gc(lib.magic_open(flags_tonumber(flags)), lib.magic_close)
@@ -154,7 +154,7 @@ function FileMagic:errno()
 end
 
 ---@param fd cdata
----@param flags number | number[]
+---@param flags number | number[] @@ optional
 ---@return string, string info, error
 function FileMagic:descriptor(fd, flags)
     if flags then
@@ -166,7 +166,7 @@ function FileMagic:descriptor(fd, flags)
 end
 
 ---@param path string
----@param flags number | number[]
+---@param flags number | number[] @@ optional
 ---@return string, string info, error
 function FileMagic:file(path, flags)
     if flags then
@@ -177,15 +177,15 @@ function FileMagic:file(path, flags)
     return value and ffi_str(value) or nil, not value and self:error() or nil
 end
 
----@param str string
----@param flags number | number []
+---@param buffer string
+---@param flags number | number [] @@ optional
 ---@return string, string info, error
-function FileMagic:buffer(str, flags)
+function FileMagic:buffer(buffer, flags)
     if flags then
         self:setflags(flags)
     end
 
-    local value = lib.magic_buffer(self.context, str, #str)
+    local value = lib.magic_buffer(self.context, buffer, #buffer)
     return value and ffi_str(value) or nil, not value and self:error() or nil
 end
 
@@ -194,32 +194,37 @@ function FileMagic:getflags()
     return lib.magic_getflags(self.context), self:error()
 end
 
+---@param flags number | number[]
 ---@return boolean, string
 function FileMagic:setflags(flags)
     return lib.magic_setflags(self.context, flags_tonumber(flags)) == 0, self:error()
 end
 
+---@param path string @@ optional
 ---@return boolean, string
 function FileMagic:check(path)
     return lib.magic_check(self.context, path) == 0, self:error()
 end
 
+---@param path string @@ optional
 ---@return boolean, string
 function FileMagic:compile(path)
     return lib.magic_compile(self.context, path) == 0, self:error()
 end
 
+---@param path string @@ optional
 ---@return boolean, string
 function FileMagic:list(path)
     return lib.magic_list(self.context, path) == 0, self:error()
 end
 
+---@param path string @@ optional
 ---@return boolean, string
 function FileMagic:load(path)
     return lib.magic_load(self.context, path) == 0, self:error()
 end
 
---function fileinfo:magic_load_buffers(buffers, sizes, nbuffers)
+--function fileinfo:load_buffers(buffers, sizes, nbuffers)
 --TODO
 --end
 

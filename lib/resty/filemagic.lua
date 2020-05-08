@@ -12,6 +12,8 @@ local ipairs       = ipairs
 local assert       = assert
 local setmetatable = setmetatable
 
+local cdata_null   = ffi.new("const char *")
+
 ffi_cdef [[
 typedef struct magic_set *magic_t;
 magic_t magic_open(int);
@@ -110,12 +112,8 @@ local function __call(self, path, flags, magic)
     if self.context then
         return self:file(path, flags)
     else
-        local context = ffi_gc(lib.magic_open(flags_tonumber(flags)), lib.magic_close)
-
-        assert(lib.magic_load(context, magic) == 0, "Unable to load magic database.")
-
-        local value = lib.magic_file(context, path)
-        return value and ffi_str(value) or false, not value and self:error() or nil
+        local ins = self.new(flags, magic)
+        return ins:file(path)
     end
 end
 
@@ -138,14 +136,17 @@ function FileMagic.new(flags, magic)
 
     ---@type LuaFileMagic
     local this    = setmetatable({ context = context }, mt)
-    assert(this:load(magic), "Unable to load magic database: " .. this:error())
+    assert(this:load(magic))
 
     return this
 end
 
 ---@return string
 function FileMagic:error()
-    return ffi_str(lib.magic_error(self.context))
+    local err = lib.magic_error(self.context)
+    if err ~= cdata_null then
+        return ffi_str(err)
+    end
 end
 
 ---@return number

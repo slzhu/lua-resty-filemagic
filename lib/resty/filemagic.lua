@@ -28,7 +28,7 @@ const char *magic_error(magic_t);
 int magic_getflags(magic_t);
 int magic_setflags(magic_t, int);
 
-int magic_version(void);
+//int magic_version(void);
 int magic_load(magic_t, const char *);
 int magic_load_buffers(magic_t, void **, size_t *, size_t);
 
@@ -122,7 +122,7 @@ end
 ---@field context cdata
 local FileMagic   = setmetatable({ }, { __call = __call })
 
-FileMagic.version = lib.magic_version()
+--FileMagic.version = lib.magic_version()
 FileMagic.flags   = flgs
 FileMagic.params  = params
 
